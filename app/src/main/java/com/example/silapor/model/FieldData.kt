@@ -14,3 +14,8 @@ data class Field(
     val pricePerHour: Int,
     val imageUrl: String
 )
+
+data class Sport(
+    val name: String,
+    val imageUrl: String,
+)

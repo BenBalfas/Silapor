@@ -3,53 +3,236 @@ package com.example.silapor.ui.screen.home
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.example.silapor.model.DummyFieldData
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.ui.res.stringResource
+import com.example.silapor.R
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewModel: HomeViewModel = viewModel()
+) {
+    val selectedCityId by viewModel.selectedCity.collectAsState()
+    val selectedSport by viewModel.selectedSport.collectAsState()
 
+    HomeContent(
+        selectedCityId = selectedCityId,
+        selectedSport = selectedSport,
+        onCitySelected = { cityId -> viewModel.setSelectedCity(cityId) },
+        onSportSelected = { sport -> viewModel.setSelectedSport(sport) },
+        onSearchClicked = { }
+    )
 }
 
 @Composable
 fun HomeContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedCityId: Int?,
+    selectedSport: String?,
+    onCitySelected: (Int) -> Unit,
+    onSportSelected: (String) -> Unit,
+    onSearchClicked: () -> Unit
 ) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(stringResource(R.string.choose_city), style = MaterialTheme.typography.headlineMedium)
+        CityDropDown(
+            selectedCityId = selectedCityId,
+            onCitySelected = onCitySelected
+        )
+
+        Spacer(modifier = Modifier.padding(16.dp))
+
+        Text(stringResource(R.string.choose_sport), style = MaterialTheme.typography.headlineMedium)
+        SportGrid(
+            selectedSport = selectedSport,
+            onSportSelected = onSportSelected
+        )
+
+        Spacer(modifier = Modifier.padding(16.dp))
+
+        Button(
+            onClick = onSearchClicked,
+            enabled = selectedCityId != null && selectedSport != null,
+            modifier = Modifier.width(357.dp)
+        ) {
+            Text(stringResource(R.string.search_field))
+        }
+    }
+}
+
+@Composable
+fun CityDropDown(
+    selectedCityId: Int?,
+    onCitySelected: (Int) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    val cities = DummyFieldData.cities
+    val selectedCityName = cities.find { it.id == selectedCityId }?.name ?: stringResource(R.string.choose_city)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentSize(Alignment.TopStart)
+            .padding(horizontal = 16.dp)
     ) {
-        Text(
-            text = selectedItem,
-            modifier = Modifier
-                .clickable { expanded = true }
-                .padding(16.dp)
-        )
+        OutlinedButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { expanded = true }
+        ) {
+            Text(selectedCityName)
+        }
+
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = {expanded = false},
-            modifier = Modifier
-                .fillMaxWidth()
+            onDismissRequest = { expanded = false }
         ) {
-            items.forEach { item ->
-                DropdownMenu(
-                    text = { Text(text = item) },
+            cities.forEach { city ->
+                DropdownMenuItem(
+                    text = { Text(city.name) },
                     onClick = {
-                        selectedItem = item
+                        onCitySelected(city.id)
                         expanded = false
                     }
-                ) { }
+                )
             }
         }
     }
 }
+
+@Composable
+fun SportGrid(
+    selectedSport: String?,
+    onSportSelected: (String) -> Unit
+) {
+    val sports = DummyFieldData.sports
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .height(330.dp)
+    ) {
+        items(sports) { sport ->
+            SportGridItem(
+                imageUrl = sport.imageUrl,
+                name = sport.name,
+                isSelected = selectedSport == sport.name,
+                onClick = { onSportSelected(sport.name) }
+            )
+        }
+    }
+}
+
+@Composable
+fun SportGridItem(
+    imageUrl: String,
+    name: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(330.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .clickable { onClick() }
+    ) {
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = name,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+        )
+
+        if (isSelected) {
+            Icon(
+                imageVector = Icons.Default.CheckCircle,
+                contentDescription = "Selected",
+                tint = Color.White,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(32.dp)
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.4f))
+        ) {
+            Text(
+                text = name,
+                color = Color.White,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(8.dp)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CityDropDownPreview() {
+    MaterialTheme {
+        CityDropDown(
+            selectedCityId = 2,
+            onCitySelected = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SportGrid() {
+    MaterialTheme {
+        SportGrid(
+            selectedSport = stringResource(R.string.futsal),
+            onSportSelected = {}
+        )
+    }
+}
+
