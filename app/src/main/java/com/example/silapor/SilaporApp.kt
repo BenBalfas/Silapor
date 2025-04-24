@@ -5,11 +5,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -22,6 +25,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.silapor.ui.navigation.NavigationItem
 import com.example.silapor.ui.navigation.Screen
 import com.example.silapor.ui.screen.home.HomeScreen
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun SilaporApp(
@@ -32,6 +37,7 @@ fun SilaporApp(
     val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold(
+        topBar = { SilaporTopAppBar(title = stringResource(R.string.app_name)) },
         bottomBar = { BottomBar(navController) },
         modifier = Modifier
     ) { innerPadding ->
@@ -51,7 +57,24 @@ fun SilaporApp(
             }
         }
     }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SilaporTopAppBar(title: String) {
+    TopAppBar(
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+    )
 }
 
 @Composable
@@ -96,3 +119,5 @@ private fun BottomBar(
         }
     }
 }
+
+
