@@ -77,7 +77,8 @@ fun HomeContent(
         Text(stringResource(R.string.choose_city), style = MaterialTheme.typography.headlineMedium)
         CityDropDown(
             selectedCityId = selectedCityId,
-            onCitySelected = onCitySelected
+            onCitySelected = onCitySelected,
+            modifier = Modifier.padding(top = 8.dp)
         )
 
         Spacer(modifier = Modifier.padding(16.dp))
@@ -85,7 +86,8 @@ fun HomeContent(
         Text(stringResource(R.string.choose_sport), style = MaterialTheme.typography.headlineMedium)
         SportGrid(
             selectedSport = selectedSport,
-            onSportSelected = onSportSelected
+            onSportSelected = onSportSelected,
+            modifier = Modifier.padding(top = 8.dp),
         )
 
         Spacer(modifier = Modifier.padding(16.dp))
@@ -102,6 +104,7 @@ fun HomeContent(
 
 @Composable
 fun CityDropDown(
+    modifier: Modifier,
     selectedCityId: Int?,
     onCitySelected: (Int) -> Unit,
 ) {
@@ -141,6 +144,7 @@ fun CityDropDown(
 
 @Composable
 fun SportGrid(
+    modifier: Modifier,
     selectedSport: String?,
     onSportSelected: (String) -> Unit
 ) {
@@ -220,7 +224,8 @@ private fun CityDropDownPreview() {
     MaterialTheme {
         CityDropDown(
             selectedCityId = 2,
-            onCitySelected = {}
+            onCitySelected = {},
+            modifier = Modifier
         )
     }
 }
@@ -231,7 +236,8 @@ private fun SportGrid() {
     MaterialTheme {
         SportGrid(
             selectedSport = stringResource(R.string.futsal),
-            onSportSelected = {}
+            onSportSelected = {},
+            modifier = Modifier
         )
     }
 }
