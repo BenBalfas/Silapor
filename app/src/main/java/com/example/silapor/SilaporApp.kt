@@ -27,6 +27,8 @@ import com.example.silapor.ui.navigation.Screen
 import com.example.silapor.ui.screen.home.HomeScreen
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.text.font.FontWeight
+import com.example.silapor.ui.screen.favorite.FavoriteScreen
+import com.example.silapor.ui.screen.history.HistoryScreen
 
 @Composable
 fun SilaporApp(
@@ -50,10 +52,10 @@ fun SilaporApp(
                 HomeScreen()
             }
             composable(Screen.Favorite.route) {
-                HomeScreen()
+                FavoriteScreen()
             }
             composable(Screen.History.route) {
-                HomeScreen()
+                HistoryScreen()
             }
         }
     }

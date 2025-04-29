@@ -1,4 +1,5 @@
 [versions]
+accompanistFlowlayout = "0.30.1"
 agp = "8.7.3"
 coil = "2.6.0"
 kotlin = "2.1.0"
@@ -14,6 +15,7 @@ runtimeLivedata = "1.7.8"
 navigationRuntimeKtx = "2.8.9"
 
 [libraries]
+accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowlayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
