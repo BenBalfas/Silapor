@@ -4,4 +4,13 @@ sealed class Screen(val route: String) {
     data object Home : Screen("home")
     data object Favorite : Screen("favorite")
     data object History : Screen("history")
+    data object FieldList : Screen("field/{sportType}") {
+        fun createRoute(sportType: String) = "field/$sportType"
+    }
+    data object DetailField : Screen("field/{fieldId}") {
+        fun createRoute(fieldId: Int) = "field/$fieldId"
+    }
+    data object DetailBooking : Screen("history/{historyId}") {
+        fun createRoute(historyId: Int) = "history/$historyId"
+    }
 }

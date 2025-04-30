@@ -16,18 +16,12 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,31 +35,38 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.example.silapor.R
+import com.example.silapor.di.Injection
+import com.example.silapor.ui.ViewModelFactory
+import com.example.silapor.ui.navigation.Screen
+import com.example.silapor.ui.theme.SilaporTheme
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = viewModel()
-) {
-    val selectedCityId by viewModel.selectedCity.collectAsState()
+    viewModel: HomeViewModel = viewModel(
+        factory = ViewModelFactory(Injection.provideRepository())
+    ),
+    navigateToFieldList: (String) -> Unit,
+    ) {
     val selectedSport by viewModel.selectedSport.collectAsState()
 
     HomeContent(
-        selectedCityId = selectedCityId,
         selectedSport = selectedSport,
-        onCitySelected = { cityId -> viewModel.setSelectedCity(cityId) },
         onSportSelected = { sport -> viewModel.setSelectedSport(sport) },
-        onSearchClicked = { }
+        onSearchClicked = {
+            selectedSport?.let { sport ->
+                navigateToFieldList(sport.lowercase())
+            }
+        }
     )
 }
 
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    selectedCityId: Int?,
     selectedSport: String?,
-    onCitySelected: (Int) -> Unit,
     onSportSelected: (String) -> Unit,
     onSearchClicked: () -> Unit
 ) {
@@ -74,15 +75,6 @@ fun HomeContent(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(stringResource(R.string.choose_city), style = MaterialTheme.typography.headlineMedium)
-        CityDropDown(
-            selectedCityId = selectedCityId,
-            onCitySelected = onCitySelected,
-            modifier = Modifier.padding(top = 8.dp)
-        )
-
-        Spacer(modifier = Modifier.padding(16.dp))
-
         Text(stringResource(R.string.choose_sport), style = MaterialTheme.typography.headlineMedium)
         SportGrid(
             selectedSport = selectedSport,
@@ -94,50 +86,10 @@ fun HomeContent(
 
         Button(
             onClick = onSearchClicked,
-            enabled = selectedCityId != null && selectedSport != null,
+            enabled = selectedSport != null,
             modifier = Modifier.width(357.dp)
         ) {
             Text(stringResource(R.string.search_field))
-        }
-    }
-}
-
-@Composable
-fun CityDropDown(
-    modifier: Modifier,
-    selectedCityId: Int?,
-    onCitySelected: (Int) -> Unit,
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    val cities = DummyFieldData.cities
-    val selectedCityName = cities.find { it.id == selectedCityId }?.name ?: stringResource(R.string.choose_city)
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-        OutlinedButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { expanded = true }
-        ) {
-            Text(selectedCityName)
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            cities.forEach { city ->
-                DropdownMenuItem(
-                    text = { Text(city.name) },
-                    onClick = {
-                        onCitySelected(city.id)
-                        expanded = false
-                    }
-                )
-            }
         }
     }
 }
@@ -218,22 +170,11 @@ fun SportGridItem(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun CityDropDownPreview() {
-    MaterialTheme {
-        CityDropDown(
-            selectedCityId = 2,
-            onCitySelected = {},
-            modifier = Modifier
-        )
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
 private fun SportGrid() {
-    MaterialTheme {
+    SilaporTheme {
         SportGrid(
             selectedSport = stringResource(R.string.futsal),
             onSportSelected = {},
@@ -241,4 +182,3 @@ private fun SportGrid() {
         )
     }
 }
-

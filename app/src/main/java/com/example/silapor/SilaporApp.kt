@@ -27,7 +27,10 @@ import com.example.silapor.ui.navigation.Screen
 import com.example.silapor.ui.screen.home.HomeScreen
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.text.font.FontWeight
-import com.example.silapor.ui.screen.favorite.FavoriteScreen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.silapor.ui.screen.fieldDetail.FieldDetailScreen
+import com.example.silapor.ui.screen.fieldList.FieldListScreen
 import com.example.silapor.ui.screen.history.HistoryScreen
 
 @Composable
@@ -40,7 +43,11 @@ fun SilaporApp(
 
     Scaffold(
         topBar = { SilaporTopAppBar(title = stringResource(R.string.app_name)) },
-        bottomBar = { BottomBar(navController) },
+        bottomBar = {
+            if (currentRoute != Screen.DetailField.route) {
+                BottomBar(navController)
+            }
+        },
         modifier = Modifier
     ) { innerPadding ->
         NavHost(
@@ -49,13 +56,42 @@ fun SilaporApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen(
+                    navigateToFieldList = { fieldId ->
+                        navController.navigate(Screen.FieldList.createRoute(fieldId))
+                    }
+                )
+            }
+            composable(
+                route = Screen.FieldList.route,
+                arguments = listOf(navArgument("sportType") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val sportType = backStackEntry.arguments?.getString("sportType") ?: ""
+                FieldListScreen(
+                    sportType = sportType,
+                    navigateToDetail = { fieldId ->
+                        navController.navigate(Screen.DetailField.createRoute(fieldId))
+                    }
+                )
             }
             composable(Screen.Favorite.route) {
-                FavoriteScreen()
+//                FavoriteScreen()
             }
             composable(Screen.History.route) {
                 HistoryScreen()
+            }
+
+            composable(
+                route = Screen.DetailField.route,
+                arguments = listOf(navArgument("fieldId") { type = NavType.IntType }),
+            ) {
+                val id = it.arguments?.getInt("fieldId") ?: -1
+                FieldDetailScreen(
+                    fieldId = id,
+                    navigateBack = {
+                        navController.navigateUp()
+                    },
+                )
             }
         }
     }
