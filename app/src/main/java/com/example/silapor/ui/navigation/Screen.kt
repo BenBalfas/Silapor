@@ -3,13 +3,13 @@ package com.example.silapor.ui.navigation
 sealed class Screen(val route: String) {
     data object Home : Screen("home")
     data object History : Screen("history")
-    data object FieldList : Screen("field/{sportType}") {
+    data object Booking : Screen("field/{sportType}") {
         fun createRoute(sportType: String) = "field/$sportType"
     }
     data object DetailField : Screen("field/{fieldId}") {
         fun createRoute(fieldId: Int) = "field/$fieldId"
     }
-    data object DetailBooking : Screen("history/{historyId}") {
-        fun createRoute(historyId: Int) = "history/$historyId"
+    data object BookingDetail : Screen("field/{fieldId}") {
+        fun createRoute(fieldId: Int) = "field/$fieldId"
     }
 }

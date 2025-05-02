@@ -62,7 +62,7 @@ fun SilaporApp(
 //                )
             }
             composable(
-                route = Screen.FieldList.route,
+                route = Screen.Booking.route,
                 arguments = listOf(navArgument("sportType") { type = NavType.StringType })
             ) { backStackEntry ->
                 val sportType = backStackEntry.arguments?.getString("sportType") ?: ""
@@ -78,7 +78,7 @@ fun SilaporApp(
             }
 
             composable(
-                route = Screen.DetailField.route,
+                route = Screen.BookingDetail.route,
                 arguments = listOf(navArgument("fieldId") { type = NavType.IntType }),
             ) {
                 val id = it.arguments?.getInt("fieldId") ?: -1
