@@ -1,6 +1,6 @@
 package com.example.silapor
 
-import HistoryScreen
+import StatusTransaksiScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -24,13 +24,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.silapor.ui.navigation.NavigationItem
 import com.example.silapor.ui.navigation.Screen
-//import com.example.silapor.ui.screen.home.HomeScreen
+import com.example.silapor.ui.screen.home.HomeScreen
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.example.silapor.ui.screen.booking.BookingScreen
 import com.example.silapor.ui.screen.fieldDetail.FieldDetailScreen
-import com.example.silapor.ui.screen.fieldList.FieldListScreen
 
 @Composable
 fun SilaporApp(
@@ -55,26 +56,26 @@ fun SilaporApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-//                HomeScreen(
-//                    navigateToFieldList = { fieldId ->
-//                        navController.navigate(Screen.FieldList.createRoute(fieldId))
-//                    }
-//                )
+                HomeScreen(
+                    navigateToBooking = { fieldId ->
+                        navController.navigate(Screen.Booking.createRoute(fieldId))
+                    }
+                )
             }
             composable(
                 route = Screen.Booking.route,
                 arguments = listOf(navArgument("sportType") { type = NavType.StringType })
             ) { backStackEntry ->
                 val sportType = backStackEntry.arguments?.getString("sportType") ?: ""
-                FieldListScreen(
+                BookingScreen(
                     sportType = sportType,
                     navigateToDetail = { fieldId ->
-                        navController.navigate(Screen.DetailField.createRoute(fieldId))
+                        navController.navigate(Screen.BookingDetail.createRoute(fieldId))
                     }
                 )
             }
-            composable(Screen.History.route) {
-                HistoryScreen()
+            composable(Screen.StatusTransaksi.route) {
+                StatusTransaksiScreen()
             }
 
             composable(
@@ -130,7 +131,7 @@ private fun BottomBar(
             NavigationItem(
                 title = stringResource(R.string.menu_history),
                 icon = Icons.Default.DateRange,
-                screen = Screen.History
+                screen = Screen.StatusTransaksi
             ),
         )
         navigationItems.map { item ->
@@ -143,7 +144,17 @@ private fun BottomBar(
                 },
                 label = { Text(item.title) },
                 selected = currentRoute == item.screen.route,
-                onClick = {}
+                onClick = {
+                    if (currentRoute != item.screen.route) {
+                        navController.navigate(item.screen.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                }
             )
         }
     }

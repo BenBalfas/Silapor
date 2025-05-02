@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HistoryScreen() {
+fun StatusTransaksiScreen() {
     var bookingCode by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<BookingHistory>>(emptyList()) }
@@ -176,6 +176,6 @@ data class BookingHistory(
 @Composable
 fun HistoryScreenPreview() {
     MaterialTheme {
-        HistoryScreen()
+        StatusTransaksiScreen()
     }
 }
