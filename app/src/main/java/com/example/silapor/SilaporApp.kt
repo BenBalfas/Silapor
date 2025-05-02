@@ -1,9 +1,9 @@
 package com.example.silapor
 
+import HistoryScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,14 +24,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.silapor.ui.navigation.NavigationItem
 import com.example.silapor.ui.navigation.Screen
-import com.example.silapor.ui.screen.home.HomeScreen
+//import com.example.silapor.ui.screen.home.HomeScreen
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.silapor.ui.screen.fieldDetail.FieldDetailScreen
 import com.example.silapor.ui.screen.fieldList.FieldListScreen
-import com.example.silapor.ui.screen.history.HistoryScreen
 
 @Composable
 fun SilaporApp(
@@ -56,11 +55,11 @@ fun SilaporApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen(
-                    navigateToFieldList = { fieldId ->
-                        navController.navigate(Screen.FieldList.createRoute(fieldId))
-                    }
-                )
+//                HomeScreen(
+//                    navigateToFieldList = { fieldId ->
+//                        navController.navigate(Screen.FieldList.createRoute(fieldId))
+//                    }
+//                )
             }
             composable(
                 route = Screen.FieldList.route,
@@ -73,9 +72,6 @@ fun SilaporApp(
                         navController.navigate(Screen.DetailField.createRoute(fieldId))
                     }
                 )
-            }
-            composable(Screen.Favorite.route) {
-//                FavoriteScreen()
             }
             composable(Screen.History.route) {
                 HistoryScreen()
@@ -130,11 +126,6 @@ private fun BottomBar(
                 title = stringResource(R.string.menu_home),
                 icon = Icons.Default.Home,
                 screen = Screen.Home
-            ),
-            NavigationItem(
-                title = stringResource(R.string.menu_favorite),
-                icon = Icons.Default.Favorite,
-                screen = Screen.Favorite
             ),
             NavigationItem(
                 title = stringResource(R.string.menu_history),

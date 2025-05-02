@@ -12,7 +12,10 @@ data class Field(
     val name: String,
     val address: String,
     val pricePerHour: Int,
-    val imageUrl: String
+    val imageUrl: String,
+    val jamBuka: Int,
+    val jamTutup: Int,
+    val linkLokasi: String,
 )
 
 data class Sport(
